@@ -1,0 +1,77 @@
+package ee.itcollege.tetris.parts;
+
+import java.util.ArrayList;
+
+import ee.itcollege.tetris.TetrisGame;
+import ee.itcollege.tetris.lib.CollisionDetector;
+import ee.itcollege.tetris.lib.FigureGenerator;
+import javafx.scene.shape.Shape;
+import javafx.scene.transform.Rotate;
+
+@SuppressWarnings("serial")
+public class Figure extends ArrayList<Block> {
+	
+	public boolean movementDone = false;
+	public double getCenterX() {
+		return this.getCenterBlock().getX();
+	}
+	
+	public double getCenterY() {
+		return this.getCenterBlock().getY();
+	}
+	
+	private Block getCenterBlock() {
+		return this.get(0);
+	}
+
+	public void move(int deltaX, int deltaY) {
+		
+		boolean failingMove = false;
+		for (Block block : this) {
+			double newX = block.getX() + deltaX;
+			double newY = block.getY() + deltaY;
+			
+			if (newX < 0 || (newX + Block.SIZE) > TetrisGame.FIELD_WIDHT * Block.SIZE) {
+				failingMove = true;
+			}
+			
+			if(newY + Block.SIZE > TetrisGame.FIELD_HEIGHT * Block.SIZE) {
+				failingMove = true;
+				movementDone = true;
+			}
+		}
+		
+		if(failingMove)
+			return;
+		
+		for (Block block : this) {
+			block.setX(block.getX() + deltaX * Block.SIZE);
+			block.setY(block.getY() + deltaY * Block.SIZE);
+		}
+		
+		for(Figure figure : FigureGenerator.spawnedFigures) {
+			if(CollisionDetector.collide(this, figure) && this != figure) {
+				if(deltaY > 0) {
+					this.move(0, -1);
+					movementDone = true;	
+				}
+				
+				if(deltaX != 0) {
+					this.move(-deltaX, 0);
+				}
+			}
+		}
+	}
+	
+	public void rotate() {
+		for(Block block : this) {
+			
+		}
+	}
+	
+}
+
+
+
+
+

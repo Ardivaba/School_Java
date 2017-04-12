@@ -1,0 +1,59 @@
+package ee.itcollege.tetris.lib;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+import ee.itcollege.tetris.parts.Block;
+import ee.itcollege.tetris.parts.Figure;
+
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+
+public class FigureGenerator {
+
+	public static ArrayList<Figure> spawnedFigures = new ArrayList<Figure>();
+	public static ArrayList<ArrayList<int[]>> configurations = new ArrayList<ArrayList<int[]>>();
+	
+	public FigureGenerator() {
+		ArrayList<int[]> configuration = new ArrayList<int[]>();
+		configuration.add(new int[]{2, 2});
+		configuration.add(new int[]{1, 2});
+		configuration.add(new int[]{3, 2});
+		configuration.add(new int[]{2, 3});
+		configurations.add(configuration);
+		
+		configuration = new ArrayList<int[]>();
+		configuration.add(new int[]{2, 2});
+		configuration.add(new int[]{2, 2});
+		configuration.add(new int[]{2, 4});
+		configuration.add(new int[]{2, 3});
+		configurations.add(configuration);
+		
+		configuration = new ArrayList<int[]>();
+		configuration.add(new int[]{1, 1});
+		configuration.add(new int[]{1, 2});
+		configuration.add(new int[]{1, 2});
+		configuration.add(new int[]{1, 2});
+		configurations.add(configuration);
+	}
+	
+	public Figure createFigure() {
+		Figure figure = new Figure();
+		spawnedFigures.add(figure);
+
+		ArrayList<int[]> configuration = configurations.get(new Random().nextInt(configurations.size()));
+		for(int[] pos : configuration) {
+			figure.add(new Block(pos[0], pos[1]));
+		}
+		
+		Random random = new Random();
+		Color color = new Color(random.nextFloat(), random.nextFloat(), random.nextFloat(), 1.0f);
+		for(Block block : figure) {
+			block.setFill(color);
+		}
+		
+		return figure;
+	}
+
+	
+}

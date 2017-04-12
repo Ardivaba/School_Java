@@ -1,0 +1,154 @@
+package ee.itcollege.tetris;
+
+import java.awt.Event;
+
+import ee.itcollege.tetris.lib.FigureGenerator;
+import ee.itcollege.tetris.parts.Block;
+import ee.itcollege.tetris.parts.Figure;
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
+public class TetrisGame extends Application {
+
+	public static final int FIELD_HEIGHT = 30;
+	public static final int FIELD_WIDHT = 15;
+	
+	public static Figure currentFigure = null;
+	public static Scene currentScene = null;
+	public static Pane currentLayout = null;
+	
+	public static Block[][] blocks;
+
+	public static void main(String[] args) {
+		TetrisGame.launch(args);
+	}
+
+	public static FigureGenerator figureGenerator = new FigureGenerator();
+
+	@Override
+	public void start(Stage window) throws Exception {
+		TetrisGame.currentFigure = figureGenerator.createFigure();
+		currentLayout = new Pane();
+		currentLayout.getChildren().addAll(currentFigure);
+		currentScene = new Scene(currentLayout,
+				Block.SIZE * FIELD_WIDHT,
+				Block.SIZE * FIELD_HEIGHT);
+		
+		blocks = new Block[FIELD_WIDHT][FIELD_HEIGHT];
+
+		currentScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+			if(event.getCode() == KeyCode.DOWN) {
+				currentFigure.move(0, 1);
+			}
+			
+			if(event.getCode() == KeyCode.UP) {
+				currentFigure.rotate();
+			}
+			
+			if(event.getCode() == KeyCode.LEFT) {
+				currentFigure.move(-1, 0);
+			}
+			
+			if(event.getCode() == KeyCode.RIGHT) {
+				currentFigure.move(1, 0);
+			}
+			
+			if(event.getCode() == KeyCode.SPACE) {
+				currentFigure.rotate();
+				//currentFigure.movementDone = true;
+			}
+		});
+		
+        new AnimationTimer() {
+        	int timer = 0;
+        	long lastNanoTime = 0;
+            @Override public void handle(long currentNanoTime) {
+        		if(currentFigure.movementDone) {
+        			for(Block block : currentFigure) {
+        				int x = (int) block.getX() / Block.SIZE;
+        				int y = (int) block.getY() / Block.SIZE;
+        				
+        				blocks[x][y] = block;
+        				TetrisGame.checkBlocks();
+        			}
+        			
+        			currentFigure = figureGenerator.createFigure();
+        			currentLayout.getChildren().addAll(currentFigure);  
+        		}
+        		
+            	int delta = (int) (currentNanoTime - lastNanoTime) / 1000000;
+            	timer += delta;
+            	lastNanoTime = currentNanoTime;
+            	
+            	if(timer > 1000) {
+            		currentFigure.move(0, 1);
+            		timer = 0;
+            	}
+            }
+        }.start();
+
+		window.setOnCloseRequest(e -> System.exit(0));
+		window.setScene(currentScene);
+		window.show();
+	}
+	
+	public static void checkBlocks() {
+		for(int y = 0; y < TetrisGame.FIELD_HEIGHT; y++) {
+			boolean failed = false;
+			
+			for(int x = 0; x < TetrisGame.FIELD_WIDHT; x++) {
+				if(blocks[x][y] == null) {
+					failed = true;
+				}
+			}
+			
+			if(!failed) {
+				for(int x = 0; x < TetrisGame.FIELD_WIDHT; x++) {
+					Block block = blocks[x][y];
+					Platform.runLater(() -> {
+						TetrisGame.currentLayout.getChildren().remove(block);
+					});
+				}
+				
+				for(int j = y; j > 0; j--) {
+					for(int x = 0; x < TetrisGame.FIELD_WIDHT; x++) {
+						Block block = blocks[x][j];
+						if(block != null)
+							block.setY(block.getY() + block.SIZE);
+					}
+					
+					recalculateField();
+				}
+			}
+		}
+	}
+	
+	public static void recalculateField() {
+		blocks = new Block[FIELD_WIDHT][FIELD_HEIGHT];
+		
+		for(Figure figure : FigureGenerator.spawnedFigures) {
+			for(Block block : figure ) {
+				int x = (int) block.getX() / Block.SIZE;
+				int y = (int) block.getY() / Block.SIZE;
+				
+				try {
+					if(y < FIELD_HEIGHT)
+						blocks[x][y] = block;	
+				} finally {
+					
+				}
+			}
+		}
+	}
+	
+	public static void gameOver() {
+		System.out.println("Game over!");
+	}
+
+}

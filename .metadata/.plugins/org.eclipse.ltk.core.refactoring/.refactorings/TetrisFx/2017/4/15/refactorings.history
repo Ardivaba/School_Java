@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename field &apos;figures&apos; in &apos;ee.itcollege.tetris.lib.FigureGenerator&apos; to &apos;spawnedFigures&apos;&#x0D;&#x0A;- Original project: &apos;TetrisFx&apos;&#x0D;&#x0A;- Original element: &apos;ee.itcollege.tetris.lib.FigureGenerator.figures&apos;&#x0D;&#x0A;- Renamed element: &apos;ee.itcollege.tetris.lib.FigureGenerator.spawnedFigures&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" delegate="false" deprecate="false" description="Rename field &apos;figures&apos;" flags="589830" getter="false" id="org.eclipse.jdt.ui.rename.field" input="/src&lt;ee.itcollege.tetris.lib{FigureGenerator.java[FigureGenerator^figures" name="spawnedFigures" references="true" setter="false" stamp="1491983624101" textual="false" version="1.0"/>
+</session>

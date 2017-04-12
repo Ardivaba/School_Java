@@ -1,0 +1,86 @@
+package ee.itcollege.tetris;
+
+import java.awt.Event;
+
+import ee.itcollege.tetris.lib.FigureGenerator;
+import ee.itcollege.tetris.parts.Block;
+import ee.itcollege.tetris.parts.Figure;
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
+public class TetrisGame extends Application {
+
+	public static final int FIELD_HEIGHT = 30;
+	public static final int FIELD_WIDHT = 15;
+	
+	public static Figure currentFigure = null;
+
+	public static void main(String[] args) {
+		TetrisGame.launch(args);
+	}
+
+	FigureGenerator figureGenerator = new FigureGenerator();
+
+	@Override
+	public void start(Stage window) throws Exception {
+		TetrisGame.currentFigure = figureGenerator.createFigure();
+		Pane layout = new Pane();
+		layout.getChildren().addAll(currentFigure);
+		Scene scene = new Scene(layout,
+				Block.SIZE * FIELD_WIDHT,
+				Block.SIZE * FIELD_HEIGHT);
+
+		scene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+			if(event.getCode() == KeyCode.DOWN) {
+				currentFigure.move(0, 1);
+			}
+			
+			if(event.getCode() == KeyCode.UP) {
+				currentFigure.move(0, -1);
+			}
+			
+			if(event.getCode() == KeyCode.LEFT) {
+				currentFigure.move(-1, 0);
+			}
+			
+			if(event.getCode() == KeyCode.RIGHT) {
+				currentFigure.move(1, 0);
+			}
+			
+			if(event.getCode() == KeyCode.SPACE) {
+				currentFigure.rotate();
+				currentFigure.movementDone = true;
+    			TetrisGame.currentFigure = figureGenerator.createFigure();
+			}
+		});
+		
+        new AnimationTimer() {
+        	int timer = 0;
+        	long lastNanoTime = 0;
+            @Override public void handle(long currentNanoTime) {
+            	int delta = (int) (currentNanoTime - lastNanoTime) / 1000000;
+            	timer += delta;
+            	lastNanoTime = currentNanoTime;
+            	
+            	if(timer > 1000) {
+            		currentFigure.move(0, 1);
+            		if(currentFigure.movementDone)
+            			TetrisGame.currentFigure = figureGenerator.createFigure();
+            		timer = 0;
+            	}
+            }
+        }.start();
+
+		window.setOnCloseRequest(e -> System.exit(0));
+		window.setScene(scene);
+		window.show();
+	}
+	
+	
+
+}

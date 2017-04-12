@@ -1,0 +1,47 @@
+package ee.itcollege.tetris.lib;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+import ee.itcollege.tetris.parts.Block;
+import ee.itcollege.tetris.parts.Figure;
+
+public class FigureGenerator {
+
+	public static ArrayList<Figure> spawnedFigures = new ArrayList<Figure>();
+	public static ArrayList<Figure> figures = new ArrayList<Figure>();
+	
+	public FigureGenerator() {
+		
+		Figure figure = new Figure();
+
+		figure.add(new Block(2, 2));
+		figure.add(new Block(1, 2));
+		figure.add(new Block(3, 2));
+		figure.add(new Block(2, 3));
+		figures.add(figure);
+		
+		figure = new Figure();
+
+		figure.add(new Block(2, 2));
+		figure.add(new Block(1, 2));
+		figure.add(new Block(3, 2));
+		figure.add(new Block(4, 2));
+		figures.add(figure);
+		
+	}
+	
+	public Figure createFigure() {
+		Figure figure = new Figure();
+
+		figure.add(new Block(2, 2));
+		figure.add(new Block(1, 2));
+		figure.add(new Block(3, 2));
+		figure.add(new Block(2, 3));
+		//return figure;
+		
+		return figures.get(0);
+	}
+
+	
+}
