@@ -30,5 +30,7 @@ public class BarGraph {
 			
 			System.out.println();
 		}
+		
+		scanner.close();
 	}
 }
